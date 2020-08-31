@@ -1,7 +1,0 @@
-D:\dev\FillWords\FillWords\bin\Debug\FillWords.exe.config
-D:\dev\FillWords\FillWords\bin\Debug\FillWords.exe
-D:\dev\FillWords\FillWords\bin\Debug\FillWords.pdb
-D:\dev\FillWords\FillWords\obj\Debug\FillWords.csprojAssemblyReference.cache
-D:\dev\FillWords\FillWords\obj\Debug\FillWords.csproj.CoreCompileInputs.cache
-D:\dev\FillWords\FillWords\obj\Debug\FillWords.exe
-D:\dev\FillWords\FillWords\obj\Debug\FillWords.pdb
