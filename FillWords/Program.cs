@@ -28,7 +28,7 @@ namespace FillWords
             private int cellSizeY = 3;
             private int cellSizeX = 5;
 
-            private CellState[,] selected;
+            private CellState[,] cellStates;
 
             enum CellState
             {
@@ -61,7 +61,7 @@ namespace FillWords
 
             public void SelectCell(int x, int y)
             {
-                selected[x, y] = CellState.Selected;
+                cellStates[x, y] = CellState.Selected;
             }
 
             public void ResetSelection()
@@ -69,94 +69,99 @@ namespace FillWords
                 for(int i = 0; i < 6; i++)
                 for(int j = 0; j < 6; j++)
                 {
-                    selected[i,j] = CellState.None;
+                    cellStates[i,j] = CellState.None;
                 }
             }
 
-            public void SetHover(int newX, int newY)
+            public void SetHover(int deltaX, int deltaY)
             {
-                hoverX = newX;
-                hoverY = newY;
+                if(hoverX + deltaX < fieldWidth && hoverX + deltaX >= 0)  hoverX += deltaX;
+                if(hoverY + deltaY < fieldHeight && hoverY + deltaY >= 0) hoverY += deltaY;
             }
 
             public void PrintBorder()
             {
-                int x = margin;
-                int y = margin;
-                Console.SetCursorPosition(x, y);
+                Console.SetCursorPosition(margin, margin);
 
-                int maxI = fieldHeight * cellSizeX - fieldHeight;
-                int maxJ = fieldWidth * cellSizeY - fieldWidth;
+                int maxX = fieldWidth * cellSizeX - fieldWidth;
+                int maxY = fieldHeight * cellSizeY - fieldHeight;
 
-                for (int i = 0; i <= maxI; i++)
+                for (int y = 0; y <= maxY; y++)
                 {
-                    bool isFirstRowVertical = i == 0;
-                    bool isLastRowVertical = i == maxI;
-                    bool isBorderVertical = i % (cellSizeX - 1) == 0;
+                    bool isFirstRow = y == 0;
+                    bool isLastRow = y == maxY;
+                    bool isBorderHorizontal = y % (cellSizeY - 1) == 0;
 
-                    for (int j = 0; j <= maxJ; j++)
+                    for (int x = 0; x <= maxX; x++)
                     {
-                        Console.SetCursorPosition(margin + i, margin + j);
+                        Console.SetCursorPosition(margin + x, margin + y);
+                        
+                        int hoverXStart = hoverX * (cellSizeX - 1) + 1;
+                        int hoverXEnd = hoverX * (cellSizeX - 1) + cellSizeX - 2;
+                        int hoverYStart = hoverY * (cellSizeY - 1) + 1;
+                        int hoverYEnd = hoverY * (cellSizeY - 1) + cellSizeY - 2;
 
-                        bool isFirstRowHorizontal = j == 0;
-                        bool isLastRowHorizontal = j == maxJ;
-                        bool isBorderHorizontal = j % (cellSizeY - 1) == 0;
+                        if (x >= hoverXStart && x <= hoverXEnd && y >= hoverYStart && y <= hoverYEnd)
+                            Console.BackgroundColor = ConsoleColor.Red;
+
+                        bool isFirstColumn = x == 0;
+                        bool isLastColumn = x == maxX;
+                        bool isBorderVertical = x % (cellSizeX - 1) == 0;
                         bool isBorderCross = isBorderHorizontal && isBorderVertical;
 
                         if (isBorderCross)
                         {
-                            if (isFirstRowHorizontal && isFirstRowVertical)
+                            if (isFirstColumn && isFirstRow)
                                 Console.Write("┌");
-                            else if(isFirstRowHorizontal && !isFirstRowVertical && !isLastRowVertical)
+                            else if(isFirstRow && !isFirstColumn && !isLastColumn)
                                 Console.Write("┬");
-                            else if (isFirstRowHorizontal && isLastRowVertical)
+                            else if (isFirstRow && isLastColumn)
                                 Console.Write("┐");
-                            else if(isFirstRowVertical && !isFirstRowHorizontal && !isLastRowHorizontal)
+                            else if(isFirstColumn && !isFirstRow && !isLastRow)
                                 Console.Write("├");
-                            else if(!isFirstRowVertical && !isLastRowVertical && !isFirstRowHorizontal && !isLastRowHorizontal)
+                            else if(!isFirstRow && !isLastRow && !isFirstColumn && !isLastColumn)
                                 Console.Write("┼");
-                            else if(!isFirstRowHorizontal && !isLastRowHorizontal && isLastRowVertical)
+                            else if(isLastColumn && !isFirstRow && !isLastRow)
                                 Console.Write("┤");
-                            else if (isLastRowHorizontal && isFirstRowVertical)
+                            else if (isLastRow && isFirstColumn)
                                 Console.Write("└");
-                            else if(isLastRowHorizontal && !isFirstRowVertical && !isLastRowVertical)
+                            else if(isLastRow && !isFirstColumn && !isLastColumn)
                                 Console.Write("┴");
-                            else if (isLastRowHorizontal && isLastRowVertical)
+                            else if (isLastColumn && isLastRow)
                                 Console.Write("┘");
                         }
                         else
                         {
-                            if(isBorderVertical)
-                                Console.Write("│");
-                            else if(isBorderHorizontal)
-                                Console.Write("─");
+                            if(isBorderVertical)        Console.Write("│");
+                            else if(isBorderHorizontal) Console.Write("─");
+                            else                        Console.Write(" ");
                         }
+
+                        Console.ResetColor();
                     }
                 }
             }
 
             private void PrintLetters()
             {
-                int xStep = (cellSizeX - 1);
-                int yStep = (cellSizeY - 1);
-                for (int i = 0; i < fieldHeight; i++)
-                for (int j = 0; j < fieldWidth; j++)
+                int xStep = cellSizeX - 1;
+                int yStep = cellSizeY - 1;
+                for (int currentY = 0; currentY < fieldHeight; currentY++)
+                for (int currentX = 0; currentX < fieldWidth; currentX++)
                 {
                     int x, y;
-                    if(i == 0)
-                        x = margin + cellSizeX / 2;
-                    else 
-                        x = margin + i * xStep + xStep - 2;
-                    if(j == 0)
-                        y = margin + cellSizeY / 2;
-                    else
-                        y = margin + j * yStep + yStep - 1;
+                    if(currentX == 0) x = margin + cellSizeX / 2;
+                    else              x = margin + currentX * xStep + xStep - 2;
+
+                    if(currentY == 0) y = margin + cellSizeY / 2;
+                    else              y = margin + currentY * yStep + yStep - 1;
+
+                    if(currentX == hoverX && currentY == hoverY)
+                        Console.BackgroundColor = ConsoleColor.Red;
 
                     Console.SetCursorPosition(x, y);
-                    if (y == 6) Console.BackgroundColor = ConsoleColor.Green;
-                    else if (y == 8) Console.BackgroundColor = ConsoleColor.Blue;
-                    else Console.ResetColor();
-                    Console.Write(field[j, i]);
+                    Console.Write(field[currentY, currentX]);
+                    Console.ResetColor();
                 }
 
             }
@@ -173,8 +178,21 @@ namespace FillWords
 
         static void Main(string[] args)
         {
+            Console.CursorVisible = false;
+
             Field field = new Field();
-            field.Print();
+
+            ConsoleKeyInfo cki;
+            do {
+                field.Print();
+
+                cki = Console.ReadKey();
+
+                if (cki.Key == ConsoleKey.DownArrow)  field.SetHover(0, 1);
+                if (cki.Key == ConsoleKey.UpArrow)    field.SetHover(0, -1);
+                if (cki.Key == ConsoleKey.RightArrow) field.SetHover(1, 0);
+                if (cki.Key == ConsoleKey.LeftArrow)  field.SetHover(-1, 0);
+            } while (true);
         }
     }
 }
