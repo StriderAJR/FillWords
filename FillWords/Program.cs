@@ -10,30 +10,9 @@ namespace FillWords
     {
         public class Field
         {
-            char[,] field =
-            {
-                { 'ч', 'о', 'б', 'р', 'а', 'з' },
-                { 'а', 'с', 'в', 'о', 'д', 'я' },
-                { 'е', 'в', 'а', 'р', 'а', 'и' },
-                { 'и', 'л', 'и', 'п', 'у', 'ц' },
-                { 'н', 'е', 'н', 'р', 'м', 'а' },
-                { 'с', 'у', 'ф', 'о', 'г', 'ю' }
-            };
-
-            private int hoverX;
-            private int hoverY;
-            private int margin = 5;
-            private int fieldWidth = 6;
-            private int fieldHeight = 6;
-            private int cellSizeY = 3;
-            private int cellSizeX = 5;
-
-            private CellState[,] cellStates;
-
-            enum CellState
-            {
-                None, Selected, Hover
-            }
+            private char[,] field;
+            private int fieldWidth;
+            private int fieldHeight;
 
             private class WordWithCoords
             {
@@ -43,9 +22,25 @@ namespace FillWords
 
             private List<WordWithCoords> words;
 
-            public Field()
+            public Field(int fieldWidth, int fieldHeight)
             {
-                CellState[,] selected = new CellState[fieldWidth,fieldHeight];
+                this.fieldWidth = fieldWidth;
+                this.fieldHeight = fieldHeight;
+                GenerateField();
+            }
+
+            private void GenerateField()
+            {
+                field = new [,]
+                {
+                    { 'ч', 'о', 'б', 'р', 'а', 'з' },
+                    { 'а', 'с', 'в', 'о', 'д', 'я' },
+                    { 'е', 'в', 'а', 'р', 'а', 'и' },
+                    { 'и', 'л', 'и', 'п', 'у', 'ц' },
+                    { 'н', 'е', 'н', 'р', 'м', 'а' },
+                    { 'с', 'у', 'ф', 'о', 'г', 'ю' }
+                };
+
                 words = new List<WordWithCoords>();
                 words.Add(new WordWithCoords
                 {
@@ -57,6 +52,57 @@ namespace FillWords
                     Word = "образ",
                     Coords = new[] { new[] { 0, 0 }, new[] { 0, 1 }, new[] { 1, 2 }, new[] { 1, 3 }, new[] { 1, 4 }, new[] { 1, 5 } }
                 });
+            }
+
+            public char GetLetter(int x, int y)
+            {
+                return field[y, x];
+            }
+
+            public int GetFieldWidth()
+            {
+                return fieldWidth;
+            }
+
+            public int GetFieldHeight()
+            {
+                return fieldHeight;
+            }
+        }
+
+        public class FillWords
+        {
+            private Field field;
+            private int fieldWidth;
+            private int fieldHeight;
+
+            private int hoverX;
+            private int hoverY;
+
+            private int margin = 5;
+            private int cellSizeY = 3;
+            private int cellSizeX = 5;
+
+            private CellState[,] cellStates;
+
+            enum CellState
+            {
+                None, Selected, Hover
+            }
+
+            public FillWords(int fieldWidth, int fieldHeight)
+            {
+                this.fieldWidth = fieldWidth;
+                this.fieldHeight = fieldHeight;
+
+                field = new Field(fieldWidth, fieldHeight);
+                cellStates = new CellState[field.GetFieldWidth(), field.GetFieldHeight()];
+            }
+
+            public void SetHover(int deltaX, int deltaY)
+            {
+                if(hoverX + deltaX < fieldWidth && hoverX + deltaX >= 0)  hoverX += deltaX;
+                if(hoverY + deltaY < fieldHeight && hoverY + deltaY >= 0) hoverY += deltaY;
             }
 
             public void SelectCell(int x, int y)
@@ -71,12 +117,6 @@ namespace FillWords
                 {
                     cellStates[i,j] = CellState.None;
                 }
-            }
-
-            public void SetHover(int deltaX, int deltaY)
-            {
-                if(hoverX + deltaX < fieldWidth && hoverX + deltaX >= 0)  hoverX += deltaX;
-                if(hoverY + deltaY < fieldHeight && hoverY + deltaY >= 0) hoverY += deltaY;
             }
 
             public void PrintBorder()
@@ -160,7 +200,7 @@ namespace FillWords
                         Console.BackgroundColor = ConsoleColor.Red;
 
                     Console.SetCursorPosition(x, y);
-                    Console.Write(field[currentY, currentX]);
+                    Console.Write(field.GetLetter(currentX, currentY));
                     Console.ResetColor();
                 }
 
@@ -180,18 +220,18 @@ namespace FillWords
         {
             Console.CursorVisible = false;
 
-            Field field = new Field();
+            FillWords fillWords = new FillWords(6, 6);
 
             ConsoleKeyInfo cki;
             do {
-                field.Print();
+                fillWords.Print();
 
                 cki = Console.ReadKey();
 
-                if (cki.Key == ConsoleKey.DownArrow)  field.SetHover(0, 1);
-                if (cki.Key == ConsoleKey.UpArrow)    field.SetHover(0, -1);
-                if (cki.Key == ConsoleKey.RightArrow) field.SetHover(1, 0);
-                if (cki.Key == ConsoleKey.LeftArrow)  field.SetHover(-1, 0);
+                if (cki.Key == ConsoleKey.DownArrow)  fillWords.SetHover(0, 1);
+                if (cki.Key == ConsoleKey.UpArrow)    fillWords.SetHover(0, -1);
+                if (cki.Key == ConsoleKey.RightArrow) fillWords.SetHover(1, 0);
+                if (cki.Key == ConsoleKey.LeftArrow)  fillWords.SetHover(-1, 0);
             } while (true);
         }
     }
