@@ -8,13 +8,13 @@ namespace FillWords
         private readonly int _fieldWidth;
         private readonly int _fieldHeight;
 
-        private class WordWithCoords
+        private class WordInfo
         {
             public string Word { get; set; }
-            public int[][] Coords { get; set; }
+            public List<int[]> Coords { get; set; }
         }
 
-        private List<WordWithCoords> _words;
+        private List<WordInfo> _words;
 
         public Field(int fieldWidth, int fieldHeight)
         {
@@ -35,16 +35,16 @@ namespace FillWords
                 {'с', 'у', 'ф', 'о', 'г', 'ю'}
             };
 
-            _words = new List<WordWithCoords>();
-            _words.Add(new WordWithCoords
+            _words = new List<WordInfo>();
+            _words.Add(new WordInfo
             {
                 Word = "час",
-                Coords = new[] {new[] {0, 0}, new[] {1, 0}, new[] {1, 1}}
+                Coords = new List<int[]> {new[] {0, 0}, new[] {1, 0}, new[] {1, 1}}
             });
-            _words.Add(new WordWithCoords
+            _words.Add(new WordInfo
             {
                 Word = "образ",
-                Coords = new[] {new[] {0, 0}, new[] {0, 1}, new[] {1, 2}, new[] {1, 3}, new[] {1, 4}, new[] {1, 5}}
+                Coords = new List<int[]> {new[] {0, 0}, new[] {0, 1}, new[] {1, 2}, new[] {1, 3}, new[] {1, 4}, new[] {1, 5}}
             });
         }
 
@@ -63,10 +63,32 @@ namespace FillWords
             return _fieldHeight;
         }
 
-        public bool CheckWord(string word, List<int[]> coords, out string message)
+        public bool CheckWord(string userWord, List<int[]> coords, out string message)
         {
-            message = "No, God! Please, no!!!";
-            return false;
+            message = string.Empty;
+            bool isFound = false;
+            
+            foreach (var wordInfo in _words) 
+            {
+                string knownWord = wordInfo.Word;
+                List<int[]> knownCoords = wordInfo.Coords;
+                if(knownWord == userWord) 
+                {
+                    isFound = true;
+                    for(int i = 0; i > knownCoords.Count; i++)
+                    {
+                        if(knownCoords[i][0] != coords[i][0]
+                           || knownCoords[i][1] != coords[i][1])
+                        {
+                            message = "Попробуйте по-другому";
+                            return false;
+                        }
+                    }
+                }
+            }
+            
+            if(!isFound) message = $"Слово \"{userWord}\" не было загадано.";
+            return isFound;
         }
     }
 }

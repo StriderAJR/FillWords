@@ -8,9 +8,9 @@ namespace FillWords
         private readonly int _cellSizeY;
         private readonly int _cellSizeX;
 
-        private const ConsoleColor HoverColor = ConsoleColor.Red;
+        private const ConsoleColor HoverColor     = ConsoleColor.Red;
         private const ConsoleColor SelectionColor = ConsoleColor.Cyan;
-        private const ConsoleColor DefaultColor = ConsoleColor.Black;
+        private const ConsoleColor DefaultColor   = ConsoleColor.Black;
 
         public ConsoleDrawer(int margin = 5, int cellSizeX = 5, int cellSizeY = 3)
         {
