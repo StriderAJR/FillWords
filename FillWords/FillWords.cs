@@ -18,7 +18,7 @@ namespace FillWords
 
         private bool   _isSelectionModeOn;
         private string _word = String.Empty;
-        private List<int[]> _wordCoords = new List<int[]>();
+        private readonly List<int[]> _wordCoords = new List<int[]>();
 
         private enum CellState
         {
@@ -99,12 +99,9 @@ namespace FillWords
 
         private void ProcessWord()
         {
-            string message;
-            bool isSuccess = _field.CheckWord(_word, _wordCoords, out message);
-            if (!isSuccess)
-                _drawer.DrawMessage(isSuccess, message);
-            else
-                SetWordToGuessed();
+            bool isSuccess = _field.CheckWord(_word, _wordCoords, out string message);
+            if (!isSuccess) _drawer.DrawMessage(message);
+            else            SetWordToGuessed();
         }
         
         private void SetWordToGuessed()

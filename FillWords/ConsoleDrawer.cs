@@ -27,10 +27,10 @@ namespace FillWords
             Console.SetCursorPosition(0, 0);
         }
 
-        public void DrawMessage(bool isSuccess, string message)
+        public void DrawMessage(string message)
         {
             int marginX = 10, marginY = 10;
-            Console.ForegroundColor = isSuccess ? ConsoleColor.Green : ConsoleColor.Red;
+            Console.ForegroundColor = ConsoleColor.Red;
             PrintMessageBox(marginX, marginY, message.Length * 2);
             Console.SetCursorPosition(marginX + message.Length / 2, marginY+1);
             Console.Write(message);
