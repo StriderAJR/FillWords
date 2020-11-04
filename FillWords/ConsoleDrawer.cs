@@ -25,7 +25,17 @@ namespace FillWords
             PrintLetters(game);
             Console.SetCursorPosition(0, 0);
         }
-        
+
+        public void DrawMessage(bool isSuccess, string message)
+        {
+            int marginX = 10, marginY = 10;
+            Console.ForegroundColor = isSuccess ? ConsoleColor.Green : ConsoleColor.Red;
+            PrintMessageBox(marginX, marginY, message.Length * 2);
+            Console.SetCursorPosition(marginX + message.Length / 2, marginY+1);
+            Console.Write(message);
+            Console.ReadKey();
+        }
+
         private void PrintField(FillWords game)
         {
             Console.SetCursorPosition(_margin, _margin);
@@ -123,6 +133,16 @@ namespace FillWords
                     : game.IsCellSelected(x, y)
                         ? SelectionColor
                         : DefaultColor;
+        }
+
+        private void PrintMessageBox(int marginX, int marginY, int width)
+        {
+            Console.SetCursorPosition(marginX, marginY++);
+            Console.Write("╔" + new string('═', width) + "╗");
+            Console.SetCursorPosition(marginX, marginY++);
+            Console.Write("║" + new string(' ', width) + "║");
+            Console.SetCursorPosition(marginX, marginY);
+            Console.Write("╚" + new string('═', width) + "╝");
         }
     }
 }

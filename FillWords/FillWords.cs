@@ -68,7 +68,8 @@ namespace FillWords
         private void CheckWord()
         {
             string message;
-            _field.CheckWord(_word, _wordCoords, out message);
+            bool isSuccess = _field.CheckWord(_word, _wordCoords, out message);
+            if(!isSuccess) _drawer.DrawMessage(isSuccess, message);
         }
         
         private void SelectHoveredCell()

@@ -65,8 +65,8 @@ namespace FillWords
 
         public bool CheckWord(string word, List<int[]> coords, out string message)
         {
-            message = "All is good";
-            return true;
+            message = "No, God! Please, no!!!";
+            return false;
         }
     }
 }
