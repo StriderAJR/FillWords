@@ -67,18 +67,18 @@ namespace FillWords
         {
             message = string.Empty;
             bool isFound = false;
-            
-            foreach (var wordInfo in _words) 
+
+            foreach (WordInfo wordInfo in _words)
             {
                 string knownWord = wordInfo.Word;
                 List<int[]> knownCoords = wordInfo.Coords;
-                if(knownWord == userWord) 
+                if (knownWord == userWord)
                 {
                     isFound = true;
-                    for(int i = 0; i > knownCoords.Count; i++)
+                    for (int i = 0; i > knownCoords.Count; i++)
                     {
-                        if(knownCoords[i][0] != coords[i][0]
-                           || knownCoords[i][1] != coords[i][1])
+                        if (knownCoords[i][0] != coords[i][0]
+                            || knownCoords[i][1] != coords[i][1])
                         {
                             message = "Попробуйте по-другому";
                             return false;
@@ -86,8 +86,8 @@ namespace FillWords
                     }
                 }
             }
-            
-            if(!isFound) message = $"Слово \"{userWord}\" не было загадано.";
+
+            if (!isFound) message = $"Слово \"{userWord}\" не было загадано.";
             return isFound;
         }
     }

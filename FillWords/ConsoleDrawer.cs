@@ -11,6 +11,7 @@ namespace FillWords
         private const ConsoleColor HoverColor     = ConsoleColor.Red;
         private const ConsoleColor SelectionColor = ConsoleColor.Cyan;
         private const ConsoleColor DefaultColor   = ConsoleColor.Black;
+        private const ConsoleColor GuessedColor   = ConsoleColor.Gray;
 
         public ConsoleDrawer(int margin = 5, int cellSizeX = 5, int cellSizeY = 3)
         {
@@ -132,7 +133,9 @@ namespace FillWords
                     ? HoverColor
                     : game.IsCellSelected(x, y)
                         ? SelectionColor
-                        : DefaultColor;
+                        : game.IsCellGuessed(x, y)
+                            ? GuessedColor
+                            : DefaultColor;
         }
 
         private void PrintMessageBox(int marginX, int marginY, int width)

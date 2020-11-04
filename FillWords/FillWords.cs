@@ -23,7 +23,8 @@ namespace FillWords
         private enum CellState
         {
             None,
-            Selected
+            Selected,
+            Guessed
         }
 
         public FillWords(IDrawer drawer, int fieldWidth, int fieldHeight)
@@ -60,16 +61,58 @@ namespace FillWords
             }
             else
             {
-                CheckWord();
+                ProcessWord();
                 ResetSelection();
             }
         }
+        
+        public int GetFieldHeight()
+        {
+            return _field.GetFieldHeight();
+        }
 
-        private void CheckWord()
+        public int GetFieldWidth()
+        {
+            return _field.GetFieldWidth();
+        }
+
+        public bool IsCellSelected(int x, int y)
+        {
+            return _cellStates[x, y] == CellState.Selected;
+        }
+        
+        public bool IsCellGuessed(int x, int y)
+        {
+            return _cellStates[x, y] == CellState.Guessed;
+        }
+        
+        public bool IsCellHovered(int x, int y)
+        {
+            // return _cellStates[x, y] == CellState.Hover;
+            return x == _hoverX && y == _hoverY;
+        }
+
+        public char GetLetter(int x, int y)
+        {
+            return _field.GetLetter(x, y);
+        }
+
+        private void ProcessWord()
         {
             string message;
             bool isSuccess = _field.CheckWord(_word, _wordCoords, out message);
-            if(!isSuccess) _drawer.DrawMessage(isSuccess, message);
+            if (!isSuccess)
+                _drawer.DrawMessage(isSuccess, message);
+            else
+                SetWordToGuessed();
+        }
+        
+        private void SetWordToGuessed()
+        {
+            foreach (int[] coord in _wordCoords)
+            {
+                _cellStates[coord[0], coord[1]] = CellState.Guessed;
+            }
         }
         
         private void SelectHoveredCell()
@@ -91,7 +134,8 @@ namespace FillWords
             for (int i = 0; i < 6; i++)
             for (int j = 0; j < 6; j++)
             {
-                _cellStates[i, j] = CellState.None;
+                if(_cellStates[i, j] == CellState.Selected) 
+                    _cellStates[i, j] = CellState.None;
             }
         }
 
@@ -99,32 +143,6 @@ namespace FillWords
         {
             _word = String.Empty;
             _wordCoords.Clear();
-        }
-
-        public int GetFieldHeight()
-        {
-            return _field.GetFieldHeight();
-        }
-
-        public int GetFieldWidth()
-        {
-            return _field.GetFieldWidth();
-        }
-
-        public bool IsCellSelected(int x, int y)
-        {
-            return _cellStates[x, y] == CellState.Selected;
-        }
-        
-        public bool IsCellHovered(int x, int y)
-        {
-            // return _cellStates[x, y] == CellState.Hover;
-            return x == _hoverX && y == _hoverY;
-        }
-
-        public char GetLetter(int x, int y)
-        {
-            return _field.GetLetter(x, y);
         }
     }
 }
