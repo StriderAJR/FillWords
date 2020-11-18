@@ -10,7 +10,8 @@ namespace FillWords
 
             FillWords fillWords = new FillWords(new ConsoleDrawer(), 6, 6);
 
-            do {
+            do 
+            {
                 fillWords.Draw();
 
                 ConsoleKeyInfo cki = Console.ReadKey();
