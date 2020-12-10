@@ -6,6 +6,7 @@ namespace FillWords
     {
         static void Main(string[] args)
         {
+            // TEST
             Console.CursorVisible = false;
 
             FillWords fillWords = new FillWords(new ConsoleDrawer(), 6, 6);
